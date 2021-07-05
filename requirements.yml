@@ -21,3 +21,7 @@ roles:
 - src: https://gitlab.epfl.ch/ecps/ansible_ldap_authentication.git
   scm: git
   name: ansible_ldap
+
+- src: https://gitlab.epfl.ch/ecps/ansible_sudo.git
+  scm: git
+  name: ansible_sudo
