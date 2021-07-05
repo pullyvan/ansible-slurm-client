@@ -1,10 +1,9 @@
 - hosts: local
   tasks:
-          #requirement files deployed
+
+          # Requirement files deployed
           - include_role:
-                    name: roles/ansible_deployement.yaml
-
-
+                    name: roles/ansible_deployement
 
           # Basics role
           - name: check if the basics role has already run
