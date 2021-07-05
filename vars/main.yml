@@ -1,0 +1,8 @@
+---
+# The ad_force_rejoin is used by the Kerberos SSO role
+# It allows to control wether the machine should be added to the Active Directory at every run.
+# It tries to get it's value through the AD_FORCE_REJOIN environment variable and defaults to false.
+# Note that it accepts truthy and falsy values (true, True, yes, 1,...)
+ad_force_rejoin: "{{ (lookup('env', 'AD_FORCE_REJOIN') or false) | bool }}"
+lokiUsername: team
+sudoerFilename: ldap-sudoer

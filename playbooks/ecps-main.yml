@@ -1,0 +1,94 @@
+- hosts: all
+  vars_files:
+    - ../vars/main.yml
+  tasks:
+          # Basics role
+          - name: check if the basics role has already run
+            stat:
+                    path: "/root/.ansible_basics_role"
+            register: ansible_basics_role
+
+          - include_role:
+                    name: roles/basics
+            when:
+                - ansible_basics_role.stat.exists == false
+
+          - name: Flag the basics role as already run
+            file:
+                    path: "/root/.ansible_basics_role"
+                    state: touch
+            when:
+                - ansible_basics_role.stat.exists == false
+
+          # ldap role
+          - name: check if the ldap role has already run
+            stat:
+                    path: "/root/.ansible_ldap_role"
+            register: ansible_ldap_role
+
+          - include_role:
+                    name: roles/ansible_ldap
+            when:
+                - ansible_ldap_role.stat.exists == false
+
+          - name: Flag the ldap role as already run
+            file:
+                    path: "/root/.ansible_ldap_role"
+                    state: touch
+            when:
+                - ansible_ldap_role.stat.exists == false
+
+          # sudo role
+          - name: check if the sudo role has already run
+            stat:
+                    path: "/root/.ansible_sudo_role"
+            register: ansible_sudo_role
+
+          - include_role:
+                    name: roles/ansible_sudo
+            when:
+                - ansible_sudo_role.stat.exists == false
+
+          - name: Flag the basics role as already run
+            file:
+                    path: "/root/.ansible_sudo_role"
+                    state: touch
+            when:
+                - ansible_sudo_role.stat.exists == false
+
+          # mathematica role (Mathematica binairies need to be downloaded from wolfram.com)
+          - name: check if the mathematica role has already run
+            stat:
+                    path: "/root/.ansible_mathematica_role"
+            register: ansible_mathematica_role
+
+          - include_role:
+                    name: roles/mathematica
+            when:
+                - ansible_mathematica_role.stat.exists == false
+
+          - name: Flag the mathematica role as already run
+            file:
+                    path: "/root/.ansible_mathematica_role"
+                    state: touch
+            when:
+                - ansible_mathematica_role.stat.exists == false
+
+          # matlab role
+          - name: check if the matlab role has already run
+            stat:
+                    path: "/root/.ansible_matlab_role"
+            register: ansible_matlab_role
+
+          - include_role:
+                    name: roles/matlab
+            when:
+                - ansible_matlab_role.stat.exists == false
+
+          - name: Flag the matlab role as already run
+            file:
+                    path: "/root/.ansible_matlab_role"
+                    state: touch
+            when:
+                - ansible_matlab_role.stat.exists == false
+
