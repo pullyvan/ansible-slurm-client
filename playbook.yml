@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: local
   tasks:
           #requirement files deployed
           - include_role:
