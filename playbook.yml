@@ -1,10 +1,6 @@
 - hosts: local
   tasks:
 
-          # Requirement files deployed
-          - include_role:
-                    name: roles/ansible_deployement
-
           # Basics role
           - name: check if the basics role has already run
             stat:

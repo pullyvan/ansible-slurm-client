@@ -1,4 +1,0 @@
----
-# tasks file for deployement
-- name: Download requierement and install it to roles
-  command: ansible-galaxy install -r requirements.yml
