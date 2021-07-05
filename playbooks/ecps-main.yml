@@ -2,6 +2,12 @@
   vars_files:
     - ../vars/main.yml
   tasks:
+          #requirement files deployed
+          - include_role:
+                    name: roles/ansible_deployement.yaml
+
+
+
           # Basics role
           - name: check if the basics role has already run
             stat:
