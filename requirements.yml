@@ -6,15 +6,15 @@ collections:
 
 roles:
 # from GitLab or other git-based scm, using git+ssh
-- src: git@gitlab.epfl.ch:ecps/ansible_basics.git
+- src: https://gitlab.epfl.ch/ecps/ansible_basics.git
   scm: git
   name: basics
 
-- src: git@gitlab.epfl.ch:ecps/ansible_mathematica.git
+- src: https://gitlab.epfl.ch/ecps/ansible_mathematica.git
   scm: git
   name: mathematica
 
-- src: git@gitlab.epfl.ch:ecps/ansible_matlab.git
+- src: https://gitlab.epfl.ch/ecps/ansible_matlab.git
   scm: git
   name: matlab
 
