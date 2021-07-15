@@ -1,0 +1,25 @@
+---
+# tasks file for ansible_mountFileserver
+- name: Install nfs client
+  apt:
+    pkg:
+    - nfs-common
+
+- name: Unmount /home
+  ansible.posix.mount:
+    path: /home
+    state: unmounted
+
+- name: add ecpsc14 home in fstab
+  lineinfile:
+    dest: /etc/fstab
+    line: "ecpsc14:/home /home nfs rw,hard,intr,rsize=8192,wsize=8192,timeo=14 0 0"
+
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: ecpsc14:/home
+    path: /home
+    opts: rw,hard,intr,rsize=8192,wsize=8192,timeo=14
+    state: mounted
+    fstype: nfs
+
