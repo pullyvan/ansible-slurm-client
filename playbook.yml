@@ -55,8 +55,8 @@
       when:
           - ansible_sudo_role.stat.exists == false
 
-      # slurmClient role
-    - name: check if the slurmClient role has already run
+     # Basics role
+    - name: check if the slurm client role has already run
       stat:
               path: "/root/.ansible_slurmClient_role"
       register: ansible_slurmClient_role
@@ -73,7 +73,7 @@
       when:
           - ansible_slurmClient_role.stat.exists == false
 
-    # mathematica role (Mathematica binairies need to be downloaded from wolfram.com)
+     # mathematica role (Mathematica binairies need to be downloaded from wolfram.com)
     - name: check if the mathematica role has already run
       stat:
               path: "/root/.ansible_mathematica_role"
