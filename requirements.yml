@@ -30,3 +30,6 @@ roles:
   scm: git
   name: ansible_slurmclient
 
+- src: https://gitlab.epfl.ch/ecps/ansible_mountFileserver.git
+  scm: git
+  name: ansible_mountFileserver
