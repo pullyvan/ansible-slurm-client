@@ -25,3 +25,8 @@ roles:
 - src: https://gitlab.epfl.ch/ecps/ansible_sudo.git
   scm: git
   name: ansible_sudo
+
+- src: https://gitlab.epfl.ch/ecps/ansible_slurmclient.git
+  scm: git
+  name: ansible_slurmclient
+
