@@ -58,20 +58,20 @@
      # Basics role
     - name: check if the slurm client role has already run
       stat:
-              path: "/root/.ansible_slurmClient_role"
-      register: ansible_slurmClient_role
+              path: "/root/.ansible_slurmclient_role"
+      register: ansible_slurmclient_role
 
     - include_role:
-              name: roles/ansible_slurmClient
+              name: roles/ansible_slurmclient
       when:
-          - ansible_slurmClient_role.stat.exists == false
+          - ansible_slurmclient_role.stat.exists == false
 
-    - name: Flag the slurmClient role as already run
+    - name: Flag the slurm client role as already run
       file:
-              path: "/root/.ansible_slurmClient_role"
+              path: "/root/.ansible_slurmclient_role"
               state: touch
       when:
-          - ansible_slurmClient_role.stat.exists == false
+          - ansible_slurmclient_role.stat.exists == false
 
      # mathematica role (Mathematica binairies need to be downloaded from wolfram.com)
     - name: check if the mathematica role has already run
