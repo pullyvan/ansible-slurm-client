@@ -55,7 +55,25 @@
       when:
           - ansible_sudo_role.stat.exists == false
 
-     # Basics role
+      # Mount File server ECPSC14 role
+    - name: check if the mount file server ecpsc14 role has already run
+      stat:
+              path: "/root/.ansible_mountFileserver_role"
+      register: ansible_mountFileserver_role
+
+    - include_role:
+              name: roles/ansible_mountFileserver
+      when:
+          - ansible_mountFileserver_role.stat.exists == false
+
+    - name: Flag the mountFileserver role as already run
+      file:
+              path: "/root/.ansible_mountFileserver_role"
+              state: touch
+      when:
+          - ansible_mountFileserver_role.stat.exists == false
+
+     # slurm client role
     - name: check if the slurm client role has already run
       stat:
               path: "/root/.ansible_slurmclient_role"
