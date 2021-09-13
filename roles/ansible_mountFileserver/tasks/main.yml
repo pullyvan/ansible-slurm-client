@@ -10,6 +10,11 @@
     path: /home
     state: unmounted
 
+- name: add ecpsc14 in hosts file
+  lineinfile:
+    dest: /etc/hosts
+    line: "128.178.242.140  ecpsc14"
+
 - name: add ecpsc14 home in fstab
   lineinfile:
     dest: /etc/fstab
