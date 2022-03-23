@@ -1,0 +1,176 @@
+---
+# tasks file for basics
+- name: Template a file to /etc/profile.d/export-path.sh
+  ansible.builtin.template:
+    src: /templates/export-path.j2
+    dest: /etc/profile.d/export-path.sh
+
+- name: Enable universe repository
+  apt_repository:
+    repo: "{{ item }}"
+  loop:
+    - "deb http://archive.ubuntu.com/ubuntu/ focal universe"
+    - "deb http://archive.ubuntu.com/ubuntu/ focal-updates universe"
+    - "deb http://security.ubuntu.com/ubuntu/ focal-security universe"
+  register: universe
+
+- name: install S3 requirements
+  become: yes
+  apt:
+    state: latest
+    pkg:
+      - python3-boto
+      - python3-boto3
+      - python3-botocore
+
+- name: Add inkstable stable repository from PPA and install its signing key on Ubuntu target
+  ansible.builtin.apt_repository:
+    repo: ppa:inkscape.dev/stable
+
+- name: Download {{ mendeleydesktop }}
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "/ecps/deb/{{ mendeleydesktop }}"
+    dest: "{{ tmp_mendeley }}"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+- name: Install a mendeleydesktop.deb package
+  apt:
+    deb: "{{ tmp_mendeley }}"
+
+
+- name: update & upgrade ubuntu
+  become: yes
+  package:
+    update_cache: yes
+    upgrade: yes
+
+
+- name: install basic tools via apt
+  become: yes
+  apt:
+    state: latest
+    pkg:
+      - git
+      - net-tools
+      - screen
+      - tmux
+      - gparted
+      - curl
+      - htop
+      - vim
+      - nmon
+      - tcsh
+      - firefox
+      - eom
+      - unzip
+      - make
+      - gcc
+      - tcsh
+      - zsh
+      - csh
+      - ash
+      - bsh
+      - fish
+      - cifs-utils
+      - byobu
+      - software-properties-common
+      - gnupg
+      - gnupg1
+      - gnupg2
+      - gnuplot
+      - paraview
+      - paraview-dev
+      - inkscape
+      - gimp
+      - spyder
+      - spyder3
+      - mendeleydesktop
+      - texmaker
+      - klatexformula
+      - cmake
+      - cmake-curses-gui
+      - kdevelop
+      - kdevelop-dev
+      - gcc
+      - g++
+      - clang
+      - gdb
+#      - fftw-dev
+#      - fftw2
+      - libfftw3-3
+      - libfftw3-dev
+      - libfftw3-mpi-dev
+      - libfftw3-mpi3
+      - libeigen3-dev
+      - libnetcdf-dev
+      - libnetcdf-mpi-dev
+      - libnetcdf-mpi-13
+      - libgtest-dev
+      - python3-mpi4py
+      - python3-mpi4py-dbg
+      - python3-h5netcdf
+      - python3-h5py
+      - python3-h5py-dbg
+      # needed by netcdfcxx4
+      - libhdf5-dev
+      - libhdf5-mpi-dev
+      - hdf5-tools
+      - zlib1g
+      - zlib1g-dev
+      - curl
+      - libnetcdf-pnetcdf-13
+      - libnetcdf-pnetcdf-dev
+      - libpnetcdf-dev
+      - libpnetcdf0d
+      - pnetcdf-bin
+
+
+
+- name: Install "pycharm" with option --classic
+  shell: snap install pycharm-community --classic
+
+- name: Install "visual studio" with option --classic
+  shell: snap install code --classic
+
+- name: Install "JetBrains Clion" with option --classic
+  shell: snap install clion --classic
+
+- name: download netcdfc480
+  get_url:
+    url: "https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.8.0.zip"
+    dest: "/tmp/"
+    timeout: 120
+
+- name: Check {{ netcdf_path }} folder
+  become: yes
+  stat:
+    path: "{{ netcdf_path }}"
+  register: netcdf_path_created
+
+- name: Create {{ netcdf_path }} dir in /tmp
+  file:
+    path: "{{ netcdf_path }}"
+    state: directory
+    mode: "0755"
+  when: netcdf_path_created.stat.exists == False
+
+- name: Unarchive a file that is already on the remote machine
+  ansible.builtin.unarchive:
+    src: /tmp/netcdf-c-4.8.0.zip
+    dest: "{{ netcdf_path }}"
+    remote_src: yes
+
+- name: Running ./configure and make for netcdf
+  command: chdir=/tmp/netcdf480/netcdf-c-4.8.0 {{ item }}
+  with_items:
+  - ./configure --prefix=/usr/local --disable-hdf5
+  - /usr/bin/make check install
+
+
+
+
