@@ -1,0 +1,165 @@
+---
+# tasks file for ansible_slurmclient
+- name: Install a list of packages for slurm client
+  apt:
+    pkg:
+    - git
+    - gcc
+    - make
+    - ruby
+    - ruby-dev
+    - libpam0g-dev
+    - libmariadb-dev
+    - libmariadb-dev-compat
+    - python
+
+- name: Install latest available version of fpm
+  community.general.gem:
+    name: fpm
+    state: latest
+
+- name: Install a list of packages for munge
+  apt:
+    pkg:
+    - libmunge-dev
+    - libmunge2
+    - munge
+
+
+- name: Download {{ munge_install_version }}.zip
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/{{ munge_versions[munge_install_version]['url'] }}"
+    dest: "{{ archive_path }}/{{ munge_versions[munge_install_version]['url'] }}"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+    validate_certs: no
+
+- name: Create /etc/munge directory if it does not exist
+  ansible.builtin.file:
+    path: /etc/munge
+    state: directory
+    mode: '0755'
+
+- name: "unzip the binaries of {{ munge_install_version }} into {{ munge_install_destination }}"
+  unarchive:
+    dest: "/etc/munge/"
+    src: "{{ archive_path }}/{{ munge_versions[munge_install_version]['url'] }}"
+    remote_src: yes
+    extra_opts:
+      - -P
+      - "{{ munge_versions[munge_install_version]['password'] }}"
+
+- name: Change file ownership for munge.key
+  ansible.builtin.file:
+    path: /etc/munge/munge.key
+    owner: "munge"
+    group: "munge"
+    mode: '0400'
+
+- name: Enable service munge
+  ansible.builtin.systemd:
+    name: munge
+    enabled: yes
+
+- name: Restart service munge
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    name: munge
+
+- name: Create /tmp/slurm directory if it does not exist
+  ansible.builtin.file:
+    path: /tmp/slurm
+    state: directory
+    mode: '0755'
+
+
+- name: "Download slurm client in {{ archive_path }}"
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/slurm-17.11.12_1.0_amd64.deb"
+    dest: "{{ archive_path }}/slurm-17.11.12_1.0_amd64.deb"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+- name: Install a .deb package
+  apt:
+    deb: "{{ archive_path }}/slurm-17.11.12_1.0_amd64.deb"
+
+- name: Create /etc/slurm directory if it does not exist
+  ansible.builtin.file:
+    path: /etc/slurm
+    state: directory
+    mode: '0755'
+
+- name: Download slurm.conf in /etc/slurm/
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/slurm.conf"
+    dest: "/etc/slurm/slurm.conf"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+
+- name: Download cgroup.conf in /etc/slurm/
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/cgroup.conf"
+    dest: "/etc/slurm/cgroup.conf"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+- name: Download cgroup_allowed_devices_file.conf in /etc/slurm/
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/cgroup_allowed_devices_file.conf"
+    dest: "/etc/slurm/cgroup_allowed_devices_file.conf"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+- name: Add the user slurm
+  ansible.builtin.user:
+    name: slurm
+    comment: slurm user add by ansible
+
+- name: Create /var/spool/slurm/ directory if it does not exist
+  ansible.builtin.file:
+    path: /var/spool/slurm/
+    state: directory
+
+- name: Create /var/spool/slurm/d directory if it does not exist
+  ansible.builtin.file:
+    path: /var/spool/slurm/d
+    state: directory
+
+- name: Download slurmd.service in /etc/systemd/system/
+  amazon.aws.aws_s3:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    bucket: 10282-70726cc2c34fcfe7d4325ef7ea151411
+    object: "ecps/slurm/slurmd.service"
+    dest: "/etc/systemd/system/slurmd.service"
+    mode: get
+    s3_url: https://s3.epfl.ch/
+
+
+- name: Enable service slurmd
+  ansible.builtin.systemd:
+    name: slurmd
+    enabled: yes
+
